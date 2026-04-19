@@ -1,0 +1,87 @@
+[
+  {
+    "id": 1,
+    "prestige": 3,
+    "requirement": {
+      "onyx": 3,
+      "sapphire": 3,
+      "diamond": 3
+    }
+  },
+  {
+    "id": 2,
+    "prestige": 3,
+    "requirement": {
+      "emerald": 3,
+      "sapphire": 3,
+      "ruby": 3
+    }
+  },
+  {
+    "id": 3,
+    "prestige": 3,
+    "requirement": {
+      "onyx": 3,
+      "ruby": 3,
+      "diamond": 3
+    }
+  },
+  {
+    "id": 4,
+    "prestige": 3,
+    "requirement": {
+      "ruby": 4,
+      "emerald": 4
+    }
+  },
+  {
+    "id": 5,
+    "prestige": 3,
+    "requirement": {
+      "sapphire": 4,
+      "emerald": 4
+    }
+  },
+  {
+    "id": 6,
+    "prestige": 3,
+    "requirement": {
+      "onyx": 4,
+      "ruby": 4
+    }
+  },
+  {
+    "id": 7,
+    "prestige": 3,
+    "requirement": {
+      "onyx": 4,
+      "diamond": 4
+    }
+  },
+  {
+    "id": 8,
+    "prestige": 3,
+    "requirement": {
+      "emerald": 3,
+      "sapphire": 3,
+      "diamond": 3
+    }
+  },
+  {
+    "id": 9,
+    "prestige": 3,
+    "requirement": {
+      "onyx": 3,
+      "ruby": 3,
+      "emerald": 3
+    }
+  },
+  {
+    "id": 10,
+    "prestige": 3,
+    "requirement": {
+      "sapphire": 4,
+      "diamond": 4
+    }
+  }
+]

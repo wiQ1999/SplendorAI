@@ -1,0 +1,937 @@
+[
+  {
+    "id": 1,
+    "tier": 1,
+    "bonus": "diamond",
+    "prestige": 0,
+    "cost": {
+      "sapphire": 3
+    }
+  },
+  {
+    "id": 2,
+    "tier": 1,
+    "bonus": "diamond",
+    "prestige": 0,
+    "cost": {
+      "ruby": 2,
+      "onyx": 1
+    }
+  },
+  {
+    "id": 3,
+    "tier": 1,
+    "bonus": "diamond",
+    "prestige": 0,
+    "cost": {
+      "sapphire": 1,
+      "emerald": 1,
+      "ruby": 1,
+      "onyx": 1
+    }
+  },
+  {
+    "id": 4,
+    "tier": 1,
+    "bonus": "diamond",
+    "prestige": 0,
+    "cost": {
+      "sapphire": 2,
+      "onyx": 2
+    }
+  },
+  {
+    "id": 5,
+    "tier": 1,
+    "bonus": "diamond",
+    "prestige": 1,
+    "cost": {
+      "emerald": 4
+    }
+  },
+  {
+    "id": 6,
+    "tier": 1,
+    "bonus": "diamond",
+    "prestige": 0,
+    "cost": {
+      "sapphire": 1,
+      "emerald": 2,
+      "ruby": 1,
+      "onyx": 1
+    }
+  },
+  {
+    "id": 7,
+    "tier": 1,
+    "bonus": "diamond",
+    "prestige": 0,
+    "cost": {
+      "sapphire": 2,
+      "emerald": 2,
+      "onyx": 1
+    }
+  },
+  {
+    "id": 8,
+    "tier": 1,
+    "bonus": "diamond",
+    "prestige": 0,
+    "cost": {
+      "diamond": 3,
+      "sapphire": 1,
+      "onyx": 1
+    }
+  },
+  {
+    "id": 9,
+    "tier": 1,
+    "bonus": "sapphire",
+    "prestige": 0,
+    "cost": {
+      "diamond": 1,
+      "onyx": 2
+    }
+  },
+  {
+    "id": 10,
+    "tier": 1,
+    "bonus": "sapphire",
+    "prestige": 0,
+    "cost": {
+      "onyx": 3
+    }
+  },
+  {
+    "id": 11,
+    "tier": 1,
+    "bonus": "sapphire",
+    "prestige": 0,
+    "cost": {
+      "diamond": 1,
+      "emerald": 1,
+      "ruby": 1,
+      "onyx": 1
+    }
+  },
+  {
+    "id": 12,
+    "tier": 1,
+    "bonus": "sapphire",
+    "prestige": 0,
+    "cost": {
+      "emerald": 2,
+      "onyx": 2
+    }
+  },
+  {
+    "id": 13,
+    "tier": 1,
+    "bonus": "sapphire",
+    "prestige": 1,
+    "cost": {
+      "ruby": 4
+    }
+  },
+  {
+    "id": 14,
+    "tier": 1,
+    "bonus": "sapphire",
+    "prestige": 0,
+    "cost": {
+      "diamond": 1,
+      "emerald": 1,
+      "ruby": 2,
+      "onyx": 1
+    }
+  },
+  {
+    "id": 15,
+    "tier": 1,
+    "bonus": "sapphire",
+    "prestige": 0,
+    "cost": {
+      "diamond": 1,
+      "emerald": 2,
+      "ruby": 2
+    }
+  },
+  {
+    "id": 16,
+    "tier": 1,
+    "bonus": "sapphire",
+    "prestige": 0,
+    "cost": {
+      "sapphire": 1,
+      "emerald": 3,
+      "ruby": 1
+    }
+  },
+  {
+    "id": 17,
+    "tier": 1,
+    "bonus": "emerald",
+    "prestige": 0,
+    "cost": {
+      "diamond": 2,
+      "sapphire": 1
+    }
+  },
+  {
+    "id": 18,
+    "tier": 1,
+    "bonus": "emerald",
+    "prestige": 0,
+    "cost": {
+      "ruby": 3
+    }
+  },
+  {
+    "id": 19,
+    "tier": 1,
+    "bonus": "emerald",
+    "prestige": 0,
+    "cost": {
+      "diamond": 1,
+      "sapphire": 1,
+      "ruby": 1,
+      "onyx": 1
+    }
+  },
+  {
+    "id": 20,
+    "tier": 1,
+    "bonus": "emerald",
+    "prestige": 0,
+    "cost": {
+      "sapphire": 2,
+      "ruby": 2
+    }
+  },
+  {
+    "id": 21,
+    "tier": 1,
+    "bonus": "emerald",
+    "prestige": 1,
+    "cost": {
+      "onyx": 4
+    }
+  },
+  {
+    "id": 22,
+    "tier": 1,
+    "bonus": "emerald",
+    "prestige": 0,
+    "cost": {
+      "diamond": 1,
+      "sapphire": 1,
+      "ruby": 1,
+      "onyx": 2
+    }
+  },
+  {
+    "id": 23,
+    "tier": 1,
+    "bonus": "emerald",
+    "prestige": 0,
+    "cost": {
+      "sapphire": 1,
+      "ruby": 2,
+      "onyx": 2
+    }
+  },
+  {
+    "id": 24,
+    "tier": 1,
+    "bonus": "emerald",
+    "prestige": 0,
+    "cost": {
+      "diamond": 1,
+      "sapphire": 3,
+      "emerald": 1
+    }
+  },
+  {
+    "id": 25,
+    "tier": 1,
+    "bonus": "ruby",
+    "prestige": 0,
+    "cost": {
+      "sapphire": 2,
+      "emerald": 1
+    }
+  },
+  {
+    "id": 26,
+    "tier": 1,
+    "bonus": "ruby",
+    "prestige": 0,
+    "cost": {
+      "diamond": 3
+    }
+  },
+  {
+    "id": 27,
+    "tier": 1,
+    "bonus": "ruby",
+    "prestige": 0,
+    "cost": {
+      "diamond": 1,
+      "sapphire": 1,
+      "emerald": 1,
+      "onyx": 1
+    }
+  },
+  {
+    "id": 28,
+    "tier": 1,
+    "bonus": "ruby",
+    "prestige": 0,
+    "cost": {
+      "diamond": 2,
+      "ruby": 2
+    }
+  },
+  {
+    "id": 29,
+    "tier": 1,
+    "bonus": "ruby",
+    "prestige": 1,
+    "cost": {
+      "diamond": 4
+    }
+  },
+  {
+    "id": 30,
+    "tier": 1,
+    "bonus": "ruby",
+    "prestige": 0,
+    "cost": {
+      "diamond": 2,
+      "sapphire": 1,
+      "emerald": 1,
+      "onyx": 1
+    }
+  },
+  {
+    "id": 31,
+    "tier": 1,
+    "bonus": "ruby",
+    "prestige": 0,
+    "cost": {
+      "diamond": 2,
+      "emerald": 1,
+      "onyx": 2
+    }
+  },
+  {
+    "id": 32,
+    "tier": 1,
+    "bonus": "ruby",
+    "prestige": 0,
+    "cost": {
+      "diamond": 1,
+      "ruby": 1,
+      "onyx": 3
+    }
+  },
+  {
+    "id": 33,
+    "tier": 1,
+    "bonus": "onyx",
+    "prestige": 0,
+    "cost": {
+      "emerald": 2,
+      "ruby": 1
+    }
+  },
+  {
+    "id": 34,
+    "tier": 1,
+    "bonus": "onyx",
+    "prestige": 0,
+    "cost": {
+      "emerald": 3
+    }
+  },
+  {
+    "id": 35,
+    "tier": 1,
+    "bonus": "onyx",
+    "prestige": 0,
+    "cost": {
+      "diamond": 1,
+      "sapphire": 1,
+      "emerald": 1,
+      "ruby": 1
+    }
+  },
+  {
+    "id": 36,
+    "tier": 1,
+    "bonus": "onyx",
+    "prestige": 0,
+    "cost": {
+      "diamond": 2,
+      "emerald": 2
+    }
+  },
+  {
+    "id": 37,
+    "tier": 1,
+    "bonus": "onyx",
+    "prestige": 1,
+    "cost": {
+      "sapphire": 4
+    }
+  },
+  {
+    "id": 38,
+    "tier": 1,
+    "bonus": "onyx",
+    "prestige": 0,
+    "cost": {
+      "diamond": 1,
+      "sapphire": 2,
+      "emerald": 1,
+      "ruby": 1
+    }
+  },
+  {
+    "id": 39,
+    "tier": 1,
+    "bonus": "onyx",
+    "prestige": 0,
+    "cost": {
+      "diamond": 2,
+      "sapphire": 2,
+      "ruby": 1
+    }
+  },
+  {
+    "id": 40,
+    "tier": 1,
+    "bonus": "onyx",
+    "prestige": 0,
+    "cost": {
+      "emerald": 1,
+      "ruby": 3,
+      "onyx": 1
+    }
+  },
+  {
+    "id": 41,
+    "tier": 2,
+    "bonus": "diamond",
+    "prestige": 2,
+    "cost": {
+      "ruby": 5
+    }
+  },
+  {
+    "id": 42,
+    "tier": 2,
+    "bonus": "diamond",
+    "prestige": 3,
+    "cost": {
+      "diamond": 6
+    }
+  },
+  {
+    "id": 43,
+    "tier": 2,
+    "bonus": "diamond",
+    "prestige": 1,
+    "cost": {
+      "emerald": 3,
+      "ruby": 2,
+      "onyx": 2
+    }
+  },
+  {
+    "id": 44,
+    "tier": 2,
+    "bonus": "diamond",
+    "prestige": 2,
+    "cost": {
+      "emerald": 1,
+      "ruby": 4,
+      "onyx": 2
+    }
+  },
+  {
+    "id": 45,
+    "tier": 2,
+    "bonus": "diamond",
+    "prestige": 1,
+    "cost": {
+      "diamond": 2,
+      "sapphire": 3,
+      "ruby": 3
+    }
+  },
+  {
+    "id": 46,
+    "tier": 2,
+    "bonus": "diamond",
+    "prestige": 2,
+    "cost": {
+      "ruby": 5,
+      "onyx": 3
+    }
+  },
+  {
+    "id": 47,
+    "tier": 2,
+    "bonus": "sapphire",
+    "prestige": 2,
+    "cost": {
+      "sapphire": 5
+    }
+  },
+  {
+    "id": 48,
+    "tier": 2,
+    "bonus": "sapphire",
+    "prestige": 3,
+    "cost": {
+      "sapphire": 6
+    }
+  },
+  {
+    "id": 49,
+    "tier": 2,
+    "bonus": "sapphire",
+    "prestige": 1,
+    "cost": {
+      "sapphire": 2,
+      "emerald": 2,
+      "ruby": 3
+    }
+  },
+  {
+    "id": 50,
+    "tier": 2,
+    "bonus": "sapphire",
+    "prestige": 2,
+    "cost": {
+      "diamond": 2,
+      "ruby": 1,
+      "onyx": 4
+    }
+  },
+  {
+    "id": 51,
+    "tier": 2,
+    "bonus": "sapphire",
+    "prestige": 1,
+    "cost": {
+      "sapphire": 2,
+      "emerald": 3,
+      "onyx": 3
+    }
+  },
+  {
+    "id": 52,
+    "tier": 2,
+    "bonus": "sapphire",
+    "prestige": 2,
+    "cost": {
+      "diamond": 5,
+      "sapphire": 3
+    }
+  },
+  {
+    "id": 53,
+    "tier": 2,
+    "bonus": "emerald",
+    "prestige": 2,
+    "cost": {
+      "emerald": 5
+    }
+  },
+  {
+    "id": 54,
+    "tier": 2,
+    "bonus": "emerald",
+    "prestige": 3,
+    "cost": {
+      "emerald": 6
+    }
+  },
+  {
+    "id": 55,
+    "tier": 2,
+    "bonus": "emerald",
+    "prestige": 1,
+    "cost": {
+      "diamond": 2,
+      "sapphire": 3,
+      "onyx": 2
+    }
+  },
+  {
+    "id": 56,
+    "tier": 2,
+    "bonus": "emerald",
+    "prestige": 1,
+    "cost": {
+      "diamond": 3,
+      "emerald": 2,
+      "ruby": 2
+    }
+  },
+  {
+    "id": 57,
+    "tier": 2,
+    "bonus": "emerald",
+    "prestige": 2,
+    "cost": {
+      "diamond": 4,
+      "sapphire": 2,
+      "onyx": 1
+    }
+  },
+  {
+    "id": 58,
+    "tier": 2,
+    "bonus": "emerald",
+    "prestige": 2,
+    "cost": {
+      "sapphire": 5,
+      "emerald": 3
+    }
+  },
+  {
+    "id": 59,
+    "tier": 2,
+    "bonus": "ruby",
+    "prestige": 2,
+    "cost": {
+      "onyx": 5
+    }
+  },
+  {
+    "id": 60,
+    "tier": 2,
+    "bonus": "ruby",
+    "prestige": 3,
+    "cost": {
+      "ruby": 6
+    }
+  },
+  {
+    "id": 61,
+    "tier": 2,
+    "bonus": "ruby",
+    "prestige": 1,
+    "cost": {
+      "diamond": 2,
+      "ruby": 2,
+      "onyx": 3
+    }
+  },
+  {
+    "id": 62,
+    "tier": 2,
+    "bonus": "ruby",
+    "prestige": 2,
+    "cost": {
+      "diamond": 1,
+      "sapphire": 4,
+      "emerald": 2
+    }
+  },
+  {
+    "id": 63,
+    "tier": 2,
+    "bonus": "ruby",
+    "prestige": 1,
+    "cost": {
+      "sapphire": 3,
+      "ruby": 2,
+      "onyx": 3
+    }
+  },
+  {
+    "id": 64,
+    "tier": 2,
+    "bonus": "ruby",
+    "prestige": 2,
+    "cost": {
+      "diamond": 3,
+      "onyx": 5
+    }
+  },
+  {
+    "id": 65,
+    "tier": 2,
+    "bonus": "onyx",
+    "prestige": 2,
+    "cost": {
+      "diamond": 5
+    }
+  },
+  {
+    "id": 66,
+    "tier": 2,
+    "bonus": "onyx",
+    "prestige": 3,
+    "cost": {
+      "onyx": 6
+    }
+  },
+  {
+    "id": 67,
+    "tier": 2,
+    "bonus": "onyx",
+    "prestige": 1,
+    "cost": {
+      "diamond": 3,
+      "sapphire": 2,
+      "emerald": 2
+    }
+  },
+  {
+    "id": 68,
+    "tier": 2,
+    "bonus": "onyx",
+    "prestige": 2,
+    "cost": {
+      "sapphire": 1,
+      "emerald": 4,
+      "ruby": 2
+    }
+  },
+  {
+    "id": 69,
+    "tier": 2,
+    "bonus": "onyx",
+    "prestige": 1,
+    "cost": {
+      "diamond": 3,
+      "emerald": 3,
+      "onyx": 2
+    }
+  },
+  {
+    "id": 70,
+    "tier": 2,
+    "bonus": "onyx",
+    "prestige": 2,
+    "cost": {
+      "emerald": 5,
+      "ruby": 3
+    }
+  },
+  {
+    "id": 71,
+    "tier": 3,
+    "bonus": "diamond",
+    "prestige": 4,
+    "cost": {
+      "onyx": 7
+    }
+  },
+  {
+    "id": 72,
+    "tier": 3,
+    "bonus": "diamond",
+    "prestige": 5,
+    "cost": {
+      "diamond": 3,
+      "onyx": 7
+    }
+  },
+  {
+    "id": 73,
+    "tier": 3,
+    "bonus": "diamond",
+    "prestige": 4,
+    "cost": {
+      "diamond": 3,
+      "ruby": 3,
+      "onyx": 6
+    }
+  },
+  {
+    "id": 74,
+    "tier": 3,
+    "bonus": "diamond",
+    "prestige": 3,
+    "cost": {
+      "sapphire": 3,
+      "emerald": 3,
+      "ruby": 5,
+      "onyx": 3
+    }
+  },
+  {
+    "id": 75,
+    "tier": 3,
+    "bonus": "sapphire",
+    "prestige": 4,
+    "cost": {
+      "diamond": 7
+    }
+  },
+  {
+    "id": 76,
+    "tier": 3,
+    "bonus": "sapphire",
+    "prestige": 5,
+    "cost": {
+      "diamond": 7,
+      "sapphire": 3
+    }
+  },
+  {
+    "id": 77,
+    "tier": 3,
+    "bonus": "sapphire",
+    "prestige": 4,
+    "cost": {
+      "diamond": 6,
+      "sapphire": 3,
+      "onyx": 3
+    }
+  },
+  {
+    "id": 78,
+    "tier": 3,
+    "bonus": "sapphire",
+    "prestige": 3,
+    "cost": {
+      "diamond": 3,
+      "emerald": 3,
+      "ruby": 3,
+      "onyx": 5
+    }
+  },
+  {
+    "id": 79,
+    "tier": 3,
+    "bonus": "emerald",
+    "prestige": 4,
+    "cost": {
+      "sapphire": 7
+    }
+  },
+  {
+    "id": 80,
+    "tier": 3,
+    "bonus": "emerald",
+    "prestige": 5,
+    "cost": {
+      "sapphire": 7,
+      "emerald": 3
+    }
+  },
+  {
+    "id": 81,
+    "tier": 3,
+    "bonus": "emerald",
+    "prestige": 4,
+    "cost": {
+      "diamond": 3,
+      "sapphire": 6,
+      "emerald": 3
+    }
+  },
+  {
+    "id": 82,
+    "tier": 3,
+    "bonus": "emerald",
+    "prestige": 3,
+    "cost": {
+      "diamond": 5,
+      "sapphire": 3,
+      "ruby": 3,
+      "onyx": 3
+    }
+  },
+  {
+    "id": 83,
+    "tier": 3,
+    "bonus": "ruby",
+    "prestige": 4,
+    "cost": {
+      "emerald": 7
+    }
+  },
+  {
+    "id": 84,
+    "tier": 3,
+    "bonus": "ruby",
+    "prestige": 5,
+    "cost": {
+      "emerald": 7,
+      "ruby": 3
+    }
+  },
+  {
+    "id": 85,
+    "tier": 3,
+    "bonus": "ruby",
+    "prestige": 4,
+    "cost": {
+      "sapphire": 3,
+      "emerald": 6,
+      "ruby": 3
+    }
+  },
+  {
+    "id": 86,
+    "tier": 3,
+    "bonus": "ruby",
+    "prestige": 3,
+    "cost": {
+      "diamond": 3,
+      "sapphire": 5,
+      "emerald": 3,
+      "onyx": 3
+    }
+  },
+  {
+    "id": 87,
+    "tier": 3,
+    "bonus": "onyx",
+    "prestige": 4,
+    "cost": {
+      "ruby": 7
+    }
+  },
+  {
+    "id": 88,
+    "tier": 3,
+    "bonus": "onyx",
+    "prestige": 5,
+    "cost": {
+      "ruby": 7,
+      "onyx": 3
+    }
+  },
+  {
+    "id": 89,
+    "tier": 3,
+    "bonus": "onyx",
+    "prestige": 4,
+    "cost": {
+      "emerald": 3,
+      "ruby": 6,
+      "onyx": 3
+    }
+  },
+  {
+    "id": 90,
+    "tier": 3,
+    "bonus": "onyx",
+    "prestige": 3,
+    "cost": {
+      "diamond": 3,
+      "sapphire": 3,
+      "emerald": 5,
+      "ruby": 3
+    }
+  }
+]
