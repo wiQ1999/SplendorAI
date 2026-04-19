@@ -27,8 +27,9 @@ splendor-core → splendor-inference → splendor-cli/splendor-gui
 ```bash
 uv sync                                    # install / sync environment
 uv run pytest                              # full test suite
-uv run ruff check . && ruff format .       # lint and format
-uv run pyright                             # type checking
+uv run ruff check .                        # check files
+uv run ruff format .                       # format files
+uv run pyright .\packages\<directory>      # type checking
 uv add --package <package-name> <dep>      # add a dependency
 uv run splendor                            # launch CLI
 uv run python -m splendor_gui              # launch GUI
