@@ -1,4 +1,4 @@
-from splendor_core import ALL_CARDS, ALL_NOBLES, GemColor
+from splendor_core import ALL_CARDS, ALL_NOBLES, GemColor, GEM_COLORS
 
 
 def test_card_count() -> None:
@@ -20,8 +20,6 @@ def test_tier_distribution() -> None:
 
 def test_bonus_distribution_tier1() -> None:
     tier1 = [c for c in ALL_CARDS if c.tier == 1]
-    from splendor_core import GEM_COLORS
-
     for color in GEM_COLORS:
         assert sum(1 for c in tier1 if c.bonus == color) == 8
 
