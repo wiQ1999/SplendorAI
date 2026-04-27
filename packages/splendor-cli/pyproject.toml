@@ -1,0 +1,29 @@
+[project]
+name = "splendor-cli"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "splendor-core",
+    "textual>=0.80",
+    "rich>=13.0",
+]
+
+[project.scripts]
+splendor = "splendor_cli.__main__:main"
+
+[tool.uv.sources]
+splendor-core = { workspace = true }
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/splendor_cli"]
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.13"
+typeCheckingMode = "strict"
+venvPath = "../.."
+venv = ".venv"
