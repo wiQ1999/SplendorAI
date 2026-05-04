@@ -247,6 +247,8 @@ def _render_take_line(pattern: str, typed: str) -> Text:
 
 
 def _suggest_buy(rest: str, state: GameState) -> list[Suggestion]:
+    from splendor_cli.rendering import format_card
+
     rest_lower = rest.strip().lower()
     legal = [a for a in legal_actions(state) if isinstance(a, Buy)]
 
@@ -256,12 +258,10 @@ def _suggest_buy(rest: str, state: GameState) -> list[Suggestion]:
             arg = f"t{action.tier} {action.index}"
             card = state.visible[action.tier][action.index]
             assert card is not None
-            desc = _card_desc(card)
         else:
             arg = f"r {action.index}"
             player = state.players[state.current_player]
             card = player.reserved[action.index]
-            desc = _card_desc(card)
 
         if not arg.startswith(rest_lower):
             continue
@@ -269,7 +269,8 @@ def _suggest_buy(rest: str, state: GameState) -> list[Suggestion]:
         line = Text()
         line.append("buy ", style="bold cyan")
         line.append(arg, style="white")
-        line.append("   " + desc, style="dim")
+        line.append(f"   T{card.tier}  ", style="dim")
+        line.append_text(format_card(card))
         out.append(Suggestion(text=line, completion=f"buy {arg}"))
 
         if len(out) >= _MAX_SUGGESTIONS:
@@ -278,37 +279,33 @@ def _suggest_buy(rest: str, state: GameState) -> list[Suggestion]:
 
 
 def _suggest_reserve(rest: str, state: GameState) -> list[Suggestion]:
+    from splendor_cli.rendering import format_card
+
     rest_lower = rest.strip().lower()
     legal = [a for a in legal_actions(state) if isinstance(a, Reserve)]
 
     out: list[Suggestion] = []
     for action in legal:
-        if action.index is None:
-            arg = f"t{action.tier}"
-            desc = f"blind from tier {action.tier} deck"
-        else:
-            arg = f"t{action.tier} {action.index}"
-            card = state.visible[action.tier][action.index]
-            assert card is not None
-            desc = _card_desc(card)
-
-        if not arg.startswith(rest_lower):
-            continue
-
         line = Text()
         line.append("reserve ", style="bold cyan")
-        line.append(arg, style="white")
-        line.append("   " + desc, style="dim")
+        if action.index is None:
+            arg = f"t{action.tier}"
+            if not arg.startswith(rest_lower):
+                continue
+            line.append(arg, style="white")
+            line.append(f"     blind draw from tier {action.tier} deck", style="dim")
+        else:
+            arg = f"t{action.tier} {action.index}"
+            if not arg.startswith(rest_lower):
+                continue
+            card = state.visible[action.tier][action.index]
+            assert card is not None
+            line.append(arg, style="white")
+            line.append(f"   T{card.tier}  ", style="dim")
+            line.append_text(format_card(card))
+
         out.append(Suggestion(text=line, completion=f"reserve {arg}"))
 
         if len(out) >= _MAX_SUGGESTIONS:
             break
     return out
-
-
-def _card_desc(card: object) -> str:
-    from splendor_core import Card
-
-    assert isinstance(card, Card)
-    cost = " ".join(f"{n}{c.value[:1].upper()}" for c, n in card.cost.items() if n > 0)
-    return f"T{card.tier} +{card.prestige} bonus={card.bonus.value}  cost: {cost}"

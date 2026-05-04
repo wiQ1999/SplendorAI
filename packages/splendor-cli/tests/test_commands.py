@@ -1,11 +1,10 @@
 import pytest
-from splendor_core import Buy, GemColor, Reserve, TakeThree, TakeTwo, new_game
-
 from splendor_cli.commands import (
     CommandError,
     build_suggestions,
     parse_command,
 )
+from splendor_core import Buy, GemColor, Reserve, TakeThree, TakeTwo, new_game
 
 
 def test_parse_take_three():

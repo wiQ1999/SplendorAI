@@ -6,7 +6,78 @@ from rich.table import Table
 from rich.text import Text
 from splendor_core import GEM_COLORS, Card, GameState, GemColor, Noble, PlayerState
 
-from splendor_cli.colors import COLOR_LETTER, COLOR_NAME, COLOR_STYLE
+from splendor_cli.colors import COLOR_LETTER, COLOR_STYLE, TAKE_ORDER
+
+# ---------------------------------------------------------------------------
+# Format helpers — fixed-width, colored tokens with dashes for zero values.
+# ---------------------------------------------------------------------------
+
+DASH_STYLE = "grey39"
+PRESTIGE_STYLE = "bold yellow"
+
+
+def format_cost(cost: dict[GemColor, int]) -> Text:
+    """`DSERO` (5 chars). Each digit colored; '-' for zero."""
+    t = Text()
+    for color in TAKE_ORDER:
+        n = cost.get(color, 0)
+        if n == 0:
+            t.append("-", style=DASH_STYLE)
+        else:
+            t.append(str(n), style=COLOR_STYLE[color])
+    return t
+
+
+def format_player_tokens(tokens: dict[GemColor, int]) -> Text:
+    """`DSEROG` (6 chars). Colored digits, '-' for zero, includes gold."""
+    t = format_cost(tokens)
+    g = tokens.get(GemColor.GOLD, 0)
+    if g == 0:
+        t.append("-", style=DASH_STYLE)
+    else:
+        t.append(str(g), style=COLOR_STYLE[GemColor.GOLD])
+    return t
+
+
+def format_prestige(value: int) -> Text:
+    """`+N` (2 chars). `+-` if zero."""
+    t = Text()
+    if value == 0:
+        t.append("+-", style=DASH_STYLE)
+    else:
+        t.append(f"+{value}", style=PRESTIGE_STYLE)
+    return t
+
+
+def format_bonus(color: GemColor) -> Text:
+    """`[X]` (3 chars), letter colored to match the gem."""
+    t = Text("[", style=DASH_STYLE)
+    t.append(COLOR_LETTER[color], style=COLOR_STYLE[color])
+    t.append("]", style=DASH_STYLE)
+    return t
+
+
+def format_card(card: Card) -> Text:
+    """`+P [B] DSERO` (12 chars)."""
+    t = format_prestige(card.prestige)
+    t.append(" ")
+    t.append_text(format_bonus(card.bonus))
+    t.append(" ")
+    t.append_text(format_cost(card.cost))
+    return t
+
+
+def format_noble(noble: Noble) -> Text:
+    """`+P DSERO` (8 chars)."""
+    t = format_prestige(noble.prestige)
+    t.append(" ")
+    t.append_text(format_cost(noble.requirement))
+    return t
+
+
+# ---------------------------------------------------------------------------
+# Top-level renderers
+# ---------------------------------------------------------------------------
 
 
 def render_game(state: GameState) -> RenderableType:
@@ -18,20 +89,22 @@ def render_game(state: GameState) -> RenderableType:
 
 
 def _render_bank_and_nobles(state: GameState) -> RenderableType:
-    bank = Text()
-    bank.append("Bank:  ")
+    bank = Text("Bank:   ", style="bold")
     for color in (*GEM_COLORS, GemColor.GOLD):
-        bank.append(f" {COLOR_LETTER[color]}:", style="")
-        bank.append(f"{state.bank.get(color, 0):>2} ", style=COLOR_STYLE[color])
+        bank.append(COLOR_LETTER[color], style=COLOR_STYLE[color])
+        bank.append(":", style=DASH_STYLE)
+        n = state.bank.get(color, 0)
+        bank.append(f"{n} ", style=COLOR_STYLE[color] if n > 0 else DASH_STYLE)
+        bank.append(" ")
 
-    nobles = Text("\nNobles: ")
+    nobles = Text("Nobles: ", style="bold")
     if not state.nobles:
-        nobles.append("(none left)", style="dim")
+        nobles.append("(none left)", style=DASH_STYLE)
     else:
         for i, n in enumerate(state.nobles):
-            nobles.append(_format_noble(n))
-            if i < len(state.nobles) - 1:
-                nobles.append(" | ")
+            if i:
+                nobles.append("   ")
+            nobles.append_text(format_noble(n))
 
     return Panel(
         Group(bank, nobles),
@@ -40,18 +113,8 @@ def _render_bank_and_nobles(state: GameState) -> RenderableType:
     )
 
 
-def _format_noble(noble: Noble) -> Text:
-    t = Text()
-    t.append(f"+{noble.prestige} ", style="bold yellow")
-    parts: list[str] = []
-    for color, n in noble.requirement.items():
-        parts.append(f"{n}{COLOR_LETTER[color]}")
-    t.append("(" + " ".join(parts) + ")", style="dim")
-    return t
-
-
 def _render_visible_cards(state: GameState) -> RenderableType:
-    table = Table(title="Cards on table", expand=True)
+    table = Table(title="Cards on table", expand=False, padding=(0, 2))
     table.add_column("Tier", justify="center", style="bold")
     for i in range(4):
         table.add_column(f"slot {i}", justify="left")
@@ -60,140 +123,83 @@ def _render_visible_cards(state: GameState) -> RenderableType:
         row: list[RenderableType] = [Text(f"T{tier}", style="bold")]
         for slot in state.visible[tier]:
             if slot is None:
-                row.append(Text("—", style="dim"))
+                row.append(Text("    (empty)   ", style=DASH_STYLE))
             else:
-                row.append(_format_card(slot))
+                row.append(format_card(slot))
         table.add_row(*row)
     return table
 
 
-def _format_card(card: Card) -> Text:
-    t = Text()
-    t.append(f"+{card.prestige} ", style="bold yellow")
-    t.append(f"[{COLOR_LETTER[card.bonus]}]", style=COLOR_STYLE[card.bonus])
-    t.append("\n")
-    parts: list[Text] = []
-    for color, n in card.cost.items():
-        if n <= 0:
-            continue
-        p = Text()
-        p.append(f"{n}", style="")
-        p.append(COLOR_LETTER[color], style=COLOR_STYLE[color])
-        parts.append(p)
-    for i, p in enumerate(parts):
-        if i:
-            t.append(" ")
-        t.append_text(p)
-    return t
-
-
 def _render_players(state: GameState) -> RenderableType:
-    table = Table(title="Players", expand=True)
+    table = Table(title="Players", expand=False, padding=(0, 2))
     table.add_column("#", justify="center")
-    table.add_column("Prestige", justify="right", style="bold yellow")
-    table.add_column("Tokens")
-    table.add_column("Bonuses")
+    table.add_column("Prestige", justify="right")
+    table.add_column("Tokens (DSEROG)", justify="left")
+    table.add_column("Bonuses (DSERO)", justify="left")
     table.add_column("Reserved", justify="center")
     table.add_column("Nobles", justify="center")
 
     for i, p in enumerate(state.players):
-        marker = "▶ " if i == state.current_player else "  "
+        is_current = i == state.current_player
+        marker = "▶ " if is_current else "  "
         header = Text(
-            f"{marker}P{i + 1}", style="bold cyan" if i == state.current_player else ""
+            f"{marker}P{i + 1}",
+            style="bold cyan" if is_current else "",
         )
         table.add_row(
             header,
-            str(p.prestige),
-            _tokens_text(p.tokens),
-            _tokens_text(p.bonuses),
+            format_prestige(p.prestige),
+            format_player_tokens(p.tokens),
+            format_cost(p.bonuses),
             str(len(p.reserved)),
             str(len(p.nobles)),
         )
     return table
 
 
-def _tokens_text(tokens: dict[GemColor, int]) -> Text:
-    t = Text()
-    first = True
-    for color in (*GEM_COLORS, GemColor.GOLD):
-        n = tokens.get(color, 0)
-        if n <= 0:
-            continue
-        if not first:
-            t.append(" ")
-        first = False
-        t.append(f"{n}", style="")
-        t.append(COLOR_LETTER[color], style=COLOR_STYLE[color])
-    if first:
-        t.append("—", style="dim")
-    return t
-
-
 def render_current_player(state: GameState) -> RenderableType:
     player = state.players[state.current_player]
     title = (
-        f"Current player — P{state.current_player + 1}  (prestige {player.prestige})"
+        f"Current player — P{state.current_player + 1}  "
+        f"(prestige {player.prestige},  cards owned: {len(player.purchased)})"
     )
 
-    body = Group(
-        _labeled("Tokens", _tokens_text(player.tokens)),
-        _labeled("Bonuses", _tokens_text(player.bonuses)),
-        _reserved_table(player),
-        _purchased_summary(player),
-        _owned_nobles(player),
-    )
-    return Panel(body, title=title, border_style="green")
+    lines: list[Text] = []
+
+    tokens_line = Text("Tokens   (DSEROG):  ", style="bold")
+    tokens_line.append_text(format_player_tokens(player.tokens))
+    lines.append(tokens_line)
+
+    bonuses_line = Text("Bonuses  (DSERO) :  ", style="bold")
+    bonuses_line.append_text(format_cost(player.bonuses))
+    lines.append(bonuses_line)
+
+    lines.append(_render_reserved(player))
+    lines.append(_render_owned_nobles(player))
+
+    return Panel(Group(*lines), title=title, border_style="green")
 
 
-def _labeled(label: str, renderable: RenderableType) -> Text:
-    t = Text()
-    t.append(f"{label}: ", style="bold")
-    if isinstance(renderable, Text):
-        t.append_text(renderable)
-    else:
-        t.append(str(renderable))
-    return t
-
-
-def _reserved_table(player: PlayerState) -> RenderableType:
+def _render_reserved(player: PlayerState) -> Text:
+    t = Text("Reserved (+P [B] DSERO): ", style="bold")
     if not player.reserved:
-        return Text("Reserved: (none)", style="dim")
-    t = Text("Reserved:\n", style="bold")
-    for i, card in enumerate(player.reserved):
-        t.append(f"  r{i}: ")
-        t.append_text(_format_card(card))
-        t.append("\n")
-    return t
-
-
-def _purchased_summary(player: PlayerState) -> Text:
-    counts: dict[GemColor, int] = {}
-    for card in player.purchased:
-        counts[card.bonus] = counts.get(card.bonus, 0) + 1
-    t = Text("Purchased: ", style="bold")
-    if not counts:
-        t.append("(none)", style="dim")
+        t.append("(none)", style=DASH_STYLE)
         return t
-    first = True
-    for color in GEM_COLORS:
-        n = counts.get(color, 0)
-        if n <= 0:
-            continue
-        if not first:
-            t.append(" ")
-        first = False
-        t.append(f"{n}×", style="")
-        t.append(COLOR_NAME[color], style=COLOR_STYLE[color])
+    for i, card in enumerate(player.reserved):
+        if i:
+            t.append("   ")
+        t.append(f"r{i}: ", style="dim")
+        t.append_text(format_card(card))
     return t
 
 
-def _owned_nobles(player: PlayerState) -> Text:
-    t = Text("Nobles: ", style="bold")
+def _render_owned_nobles(player: PlayerState) -> Text:
+    t = Text("Nobles   (+P DSERO)    : ", style="bold")
     if not player.nobles:
-        t.append("(none)", style="dim")
+        t.append("(none)", style=DASH_STYLE)
         return t
     for i, n in enumerate(player.nobles):
         if i:
-            t.append(", ")
-        t.append_text(_format_noble(n))
+            t.append("   ")
+        t.append_text(format_noble(n))
     return t
