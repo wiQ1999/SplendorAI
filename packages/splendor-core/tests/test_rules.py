@@ -254,3 +254,43 @@ def test_returns_tie_splits_reward() -> None:
     r = returns(state)
     assert abs(r[0] - 0.5) < 1e-9
     assert abs(r[1] - 0.5) < 1e-9
+
+
+def test_take_three_raises_when_bank_empty() -> None:
+    state = new_game(2, seed=0)
+    state.bank[GemColor.DIAMOND] = 0
+    colors = frozenset([GemColor.DIAMOND, GemColor.SAPPHIRE, GemColor.EMERALD])
+    with pytest.raises(ValueError, match="bank has no tokens"):
+        apply_action(state, TakeThree(colors), rng=random.Random(0))
+
+
+def test_take_three_raises_wrong_color_count() -> None:
+    state = new_game(2, seed=0)
+    colors = frozenset([GemColor.DIAMOND, GemColor.SAPPHIRE])
+    with pytest.raises(ValueError, match="exactly 3 colors"):
+        apply_action(state, TakeThree(colors), rng=random.Random(0))
+
+
+def test_take_two_raises_when_bank_below_4() -> None:
+    state = new_game(2, seed=0)
+    state.bank[GemColor.RUBY] = 3
+    with pytest.raises(ValueError, match="need at least 4"):
+        apply_action(state, TakeTwo(GemColor.RUBY), rng=random.Random(0))
+
+
+def test_take_two_raises_when_bank_empty() -> None:
+    state = new_game(2, seed=0)
+    state.bank[GemColor.EMERALD] = 0
+    with pytest.raises(ValueError, match="need at least 4"):
+        apply_action(state, TakeTwo(GemColor.EMERALD), rng=random.Random(0))
+
+
+def test_take_three_not_in_legal_when_color_unavailable() -> None:
+    state = new_game(2, seed=0)
+    state.bank[GemColor.DIAMOND] = 0
+    actions = legal_actions(state)
+    illegal = [
+        a for a in actions
+        if isinstance(a, TakeThree) and GemColor.DIAMOND in a.colors
+    ]
+    assert len(illegal) == 0

@@ -182,12 +182,26 @@ def can_afford(player: PlayerState, card: Card) -> bool:
 
 
 def _exec_take_three(state: GameState, player: PlayerState, action: TakeThree) -> None:
+    if len(action.colors) != 3:
+        raise ValueError(
+            f"TakeThree requires exactly 3 colors, got {len(action.colors)}"
+        )
+    for color in action.colors:
+        if state.bank.get(color, 0) <= 0:
+            raise ValueError(
+                f"Cannot take {color.value}: bank has no tokens of that color"
+            )
     for color in action.colors:
         state.bank[color] -= 1
         player.tokens[color] = player.tokens.get(color, 0) + 1
 
 
 def _exec_take_two(state: GameState, player: PlayerState, action: TakeTwo) -> None:
+    available = state.bank.get(action.color, 0)
+    if available < 4:
+        raise ValueError(
+            f"Cannot take two {action.color.value}: bank has {available} tokens, need at least 4"
+        )
     state.bank[action.color] -= 2
     player.tokens[action.color] = player.tokens.get(action.color, 0) + 2
 

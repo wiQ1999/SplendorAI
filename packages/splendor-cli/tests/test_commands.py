@@ -82,3 +82,17 @@ def test_suggestions_take_filters_by_prefix():
 def test_suggestions_buy_only_shows_affordable():
     state = new_game(3, seed=0)
     assert build_suggestions("buy ", state) == []
+
+
+def test_parse_take_three_illegal_raises_when_bank_empty():
+    state = new_game(3, seed=0)
+    state.bank[GemColor.DIAMOND] = 0
+    with pytest.raises(CommandError, match="not available"):
+        parse_command("take 11100", state)
+
+
+def test_parse_take_two_illegal_raises_when_bank_below_4():
+    state = new_game(2, seed=0)
+    state.bank[GemColor.EMERALD] = 3
+    with pytest.raises(CommandError, match="not available"):
+        parse_command("take 00200", state)

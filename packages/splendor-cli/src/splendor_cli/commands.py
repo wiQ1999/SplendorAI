@@ -49,7 +49,10 @@ def parse_command(raw: str, state: GameState) -> ParseResult:
         return ParseResult(action=None, exit=True)
 
     if cmd == "take":
-        return ParseResult(action=_parse_take(args), exit=False)
+        action = _parse_take(args)
+        if action not in legal_actions(state):
+            raise CommandError("That token move is not available in the current game state")
+        return ParseResult(action=action, exit=False)
 
     if cmd == "buy":
         return ParseResult(action=_parse_buy(args, state), exit=False)
