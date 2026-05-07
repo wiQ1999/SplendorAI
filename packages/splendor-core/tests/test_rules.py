@@ -181,7 +181,7 @@ def test_buy_from_reserve() -> None:
 def test_buy_uses_bonuses() -> None:
     player = make_player()
     bonus_card = Card(id=500, tier=1, bonus=GemColor.RUBY, prestige=0, cost={})
-    player.purchased.append(bonus_card)
+    player.add_purchased(bonus_card)
     player.tokens[GemColor.RUBY] = 1
     target = Card(
         id=501, tier=1, bonus=GemColor.DIAMOND, prestige=0, cost={GemColor.RUBY: 2}

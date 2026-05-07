@@ -16,6 +16,16 @@ _WIN_THRESHOLD = 15
 _MAX_TOKENS = 10
 _MAX_RESERVED = 3
 
+# Pre-computed singletons — avoids allocating new TakeThree/TakeTwo objects on
+# every legal_actions() call. Tuples from combinations() match the key type
+# because available is always built by filtering GEM_COLORS in order.
+_TAKE_THREE_ACTIONS: dict[tuple[GemColor, ...], TakeThree] = {
+    triple: TakeThree(frozenset(triple)) for triple in combinations(GEM_COLORS, 3)
+}
+_TAKE_TWO_ACTIONS: dict[GemColor, TakeTwo] = {
+    color: TakeTwo(color) for color in GEM_COLORS
+}
+
 
 def _empty_tokens() -> Tokens:
     return {c: 0 for c in GemColor}
@@ -134,15 +144,16 @@ def returns(state: GameState) -> list[float]:
 
 
 def _add_take_three(state: GameState, player: PlayerState, out: list[Action]) -> None:
-    available = [c for c in GEM_COLORS if state.bank.get(c, 0) > 0]
+    # Filter preserves GEM_COLORS order, so tuples from combinations() are valid keys.
+    available = [c for c in GEM_COLORS if state.bank[c] > 0]
     for triple in combinations(available, 3):
-        out.append(TakeThree(frozenset(triple)))
+        out.append(_TAKE_THREE_ACTIONS[triple])
 
 
 def _add_take_two(state: GameState, player: PlayerState, out: list[Action]) -> None:
     for color in GEM_COLORS:
-        if state.bank.get(color, 0) >= 4:
-            out.append(TakeTwo(color))
+        if state.bank[color] >= 4:
+            out.append(_TAKE_TWO_ACTIONS[color])
 
 
 def _add_reserve(state: GameState, player: PlayerState, out: list[Action]) -> None:
@@ -157,23 +168,34 @@ def _add_reserve(state: GameState, player: PlayerState, out: list[Action]) -> No
 
 
 def _add_buy(state: GameState, player: PlayerState, out: list[Action]) -> None:
+    bonuses = player.bonuses  # O(1) read; hoist out of the card loop
+    gold = player.tokens[GemColor.GOLD]
+    tokens = player.tokens
     for tier in (1, 2, 3):
         for idx, card in enumerate(state.visible[tier]):
-            if card is not None and can_afford(player, card):
+            if card is not None and _can_afford_with(tokens, bonuses, gold, card):
                 out.append(Buy(source="table", tier=tier, index=idx))
     for idx, card in enumerate(player.reserved):
-        if can_afford(player, card):
+        if _can_afford_with(tokens, bonuses, gold, card):
             out.append(Buy(source="reserve", tier=card.tier, index=idx))
+
+
+def _can_afford_with(tokens: Tokens, bonuses: Tokens, gold: int, card: Card) -> bool:
+    shortfall = 0
+    for color, needed in card.cost.items():
+        effective = needed - bonuses[color]
+        if effective > 0:
+            deficit = effective - tokens[color]
+            if deficit > 0:
+                shortfall += deficit
+    return shortfall <= gold
 
 
 def can_afford(player: PlayerState, card: Card) -> bool:
     bonuses = player.bonuses
-    shortfall = 0
-    for color, needed in card.cost.items():
-        effective = max(0, needed - bonuses.get(color, 0))
-        have = player.tokens.get(color, 0)
-        shortfall += max(0, effective - have)
-    return shortfall <= player.tokens.get(GemColor.GOLD, 0)
+    return _can_afford_with(
+        player.tokens, bonuses, player.tokens[GemColor.GOLD], card
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -187,23 +209,23 @@ def _exec_take_three(state: GameState, player: PlayerState, action: TakeThree) -
             f"TakeThree requires exactly 3 colors, got {len(action.colors)}"
         )
     for color in action.colors:
-        if state.bank.get(color, 0) <= 0:
+        if state.bank[color] <= 0:
             raise ValueError(
                 f"Cannot take {color.value}: bank has no tokens of that color"
             )
     for color in action.colors:
         state.bank[color] -= 1
-        player.tokens[color] = player.tokens.get(color, 0) + 1
+        player.tokens[color] += 1
 
 
 def _exec_take_two(state: GameState, player: PlayerState, action: TakeTwo) -> None:
-    available = state.bank.get(action.color, 0)
+    available = state.bank[action.color]
     if available < 4:
         raise ValueError(
             f"Cannot take two {action.color.value}: bank has {available} tokens, need at least 4"
         )
     state.bank[action.color] -= 2
-    player.tokens[action.color] = player.tokens.get(action.color, 0) + 2
+    player.tokens[action.color] += 2
 
 
 def _exec_reserve(
@@ -226,9 +248,9 @@ def _exec_reserve(
 
     player.reserved.append(card)
 
-    if state.bank.get(GemColor.GOLD, 0) > 0:
+    if state.bank[GemColor.GOLD] > 0:
         state.bank[GemColor.GOLD] -= 1
-        player.tokens[GemColor.GOLD] = player.tokens.get(GemColor.GOLD, 0) + 1
+        player.tokens[GemColor.GOLD] += 1
 
 
 def _exec_buy(state: GameState, player: PlayerState, action: Buy) -> None:
@@ -241,22 +263,23 @@ def _exec_buy(state: GameState, player: PlayerState, action: Buy) -> None:
         card = player.reserved[action.index]
         player.reserved.pop(action.index)
 
-    _pay_for_card(state, player, card)
-    player.purchased.append(card)
+    _pay_for_card(state, player, card, player.bonuses)
+    player.add_purchased(card)
 
 
-def _pay_for_card(state: GameState, player: PlayerState, card: Card) -> None:
-    bonuses = player.bonuses
+def _pay_for_card(
+    state: GameState, player: PlayerState, card: Card, bonuses: Tokens
+) -> None:
     gold_spent = 0
     for color, needed in card.cost.items():
-        effective = max(0, needed - bonuses.get(color, 0))
-        from_tokens = min(effective, player.tokens.get(color, 0))
+        effective = max(0, needed - bonuses[color])
+        from_tokens = min(effective, player.tokens[color])
         gold_needed = effective - from_tokens
-        player.tokens[color] = player.tokens.get(color, 0) - from_tokens
-        state.bank[color] = state.bank.get(color, 0) + from_tokens
+        player.tokens[color] -= from_tokens
+        state.bank[color] += from_tokens
         gold_spent += gold_needed
-    player.tokens[GemColor.GOLD] = player.tokens.get(GemColor.GOLD, 0) - gold_spent
-    state.bank[GemColor.GOLD] = state.bank.get(GemColor.GOLD, 0) + gold_spent
+    player.tokens[GemColor.GOLD] -= gold_spent
+    state.bank[GemColor.GOLD] += gold_spent
 
 
 def _draw_from_deck(state: GameState, tier: int) -> Card | None:
@@ -282,27 +305,29 @@ def _handle_token_overflow(
     held = [
         color
         for color in GemColor
-        if player.tokens.get(color, 0) > 0
+        if player.tokens[color] > 0
         for _ in range(player.tokens[color])
     ]
     to_discard = rng.sample(held, excess)
     for color in to_discard:
         player.tokens[color] -= 1
-        state.bank[color] = state.bank.get(color, 0) + 1
+        state.bank[color] += 1
 
 
 def _assign_noble(state: GameState, player: PlayerState, rng: random.Random) -> None:
     bonuses = player.bonuses
-    eligible = [
-        noble
-        for noble in state.nobles
-        if all(bonuses.get(c, 0) >= n for c, n in noble.requirement.items())
+    eligible_idx = [
+        i
+        for i, noble in enumerate(state.nobles)
+        if all(bonuses[c] >= n for c, n in noble.requirement.items())
     ]
-    if not eligible:
+    if not eligible_idx:
         return
-    chosen = rng.choice(eligible) if len(eligible) > 1 else eligible[0]
-    state.nobles.remove(chosen)
-    player.nobles.append(chosen)
+    chosen_idx = (
+        rng.choice(eligible_idx) if len(eligible_idx) > 1 else eligible_idx[0]
+    )
+    noble = state.nobles.pop(chosen_idx)
+    player.nobles.append(noble)
 
 
 def _check_end_of_round(state: GameState) -> None:
