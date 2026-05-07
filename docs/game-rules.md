@@ -78,3 +78,12 @@ Complete the current round so every player has taken the same number of turns.
 
 **Winner:** player with the most prestige points after the final round.
 **Tiebreaker:** fewest development cards purchased wins.
+
+### No legal moves
+
+If a player has **no legal actions** available at the start of their turn, that turn is skipped automatically — the game advances to the next player without any action being taken.
+
+If **all players** consecutively have no legal moves (a full pass through all players without any action), the game ends immediately in a **stalemate**:
+- The `phase` transitions to `STALEMATE` (distinct from `FINISHED`).
+- `returns()` gives every player an equal share: `1 / num_players`.
+- This is an implementation-specific rule; the official Splendor rulebook does not address stalemate.
