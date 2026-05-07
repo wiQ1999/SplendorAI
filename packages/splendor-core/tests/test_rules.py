@@ -290,7 +290,6 @@ def test_take_three_not_in_legal_when_color_unavailable() -> None:
     state.bank[GemColor.DIAMOND] = 0
     actions = legal_actions(state)
     illegal = [
-        a for a in actions
-        if isinstance(a, TakeThree) and GemColor.DIAMOND in a.colors
+        a for a in actions if isinstance(a, TakeThree) and GemColor.DIAMOND in a.colors
     ]
     assert len(illegal) == 0

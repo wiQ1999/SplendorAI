@@ -193,9 +193,7 @@ def _can_afford_with(tokens: Tokens, bonuses: Tokens, gold: int, card: Card) -> 
 
 def can_afford(player: PlayerState, card: Card) -> bool:
     bonuses = player.bonuses
-    return _can_afford_with(
-        player.tokens, bonuses, player.tokens[GemColor.GOLD], card
-    )
+    return _can_afford_with(player.tokens, bonuses, player.tokens[GemColor.GOLD], card)
 
 
 # ---------------------------------------------------------------------------
@@ -222,7 +220,8 @@ def _exec_take_two(state: GameState, player: PlayerState, action: TakeTwo) -> No
     available = state.bank[action.color]
     if available < 4:
         raise ValueError(
-            f"Cannot take two {action.color.value}: bank has {available} tokens, need at least 4"
+            f"Cannot take two {action.color.value}: bank has {available} tokens,"
+            " need at least 4"
         )
     state.bank[action.color] -= 2
     player.tokens[action.color] += 2
@@ -323,9 +322,7 @@ def _assign_noble(state: GameState, player: PlayerState, rng: random.Random) -> 
     ]
     if not eligible_idx:
         return
-    chosen_idx = (
-        rng.choice(eligible_idx) if len(eligible_idx) > 1 else eligible_idx[0]
-    )
+    chosen_idx = rng.choice(eligible_idx) if len(eligible_idx) > 1 else eligible_idx[0]
     noble = state.nobles.pop(chosen_idx)
     player.nobles.append(noble)
 

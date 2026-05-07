@@ -1,4 +1,4 @@
-from splendor_core import ALL_CARDS, ALL_NOBLES, GemColor, GEM_COLORS
+from splendor_core import ALL_CARDS, ALL_NOBLES, GEM_COLORS, GemColor
 
 
 def test_card_count() -> None:
