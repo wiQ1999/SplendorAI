@@ -86,7 +86,7 @@ def new_game(num_players: int, seed: int | None = None) -> GameState:
 
 
 def legal_actions(state: GameState) -> list[Action]:
-    if state.phase == GamePhase.FINISHED:
+    if state.phase != GamePhase.MAIN:
         return []
 
     player = state.players[state.current_player]
@@ -126,9 +126,17 @@ def apply_action(
 
 
 def returns(state: GameState) -> list[float]:
-    """Per-player reward: 1.0 for winner(s), 0.0 otherwise. Only valid when FINISHED."""
-    if state.phase != GamePhase.FINISHED:
+    """Per-player reward. Only valid when FINISHED or STALEMATE.
+
+    FINISHED: 1.0 for winner(s), 0.0 otherwise (tie-break by fewest cards).
+    STALEMATE: equal split 1/n for all players.
+    """
+    if state.phase == GamePhase.MAIN:
         raise ValueError("returns() called on non-terminal state")
+
+    if state.phase == GamePhase.STALEMATE:
+        n = len(state.players)
+        return [1.0 / n] * n
 
     scores = [(p.prestige, -len(p.purchased), i) for i, p in enumerate(state.players)]
     best = max(scores)
@@ -380,3 +388,12 @@ def _check_end_of_round(state: GameState) -> None:
         return
 
     state.current_player = next_player
+
+    # Skip players with no legal moves. If every player is skipped in one pass,
+    # no one can act — end the game as a stalemate.
+    for _ in range(n):
+        if legal_actions(state):
+            return
+        state.current_player = (state.current_player + 1) % n
+
+    state.phase = GamePhase.STALEMATE

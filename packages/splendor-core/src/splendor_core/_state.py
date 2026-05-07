@@ -10,6 +10,7 @@ from splendor_core._types import GEM_COLORS, Tokens
 class GamePhase(enum.Enum):
     MAIN = "main"
     FINISHED = "finished"
+    STALEMATE = "stalemate"
 
 
 @dataclass

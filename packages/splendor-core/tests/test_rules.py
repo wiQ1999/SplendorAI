@@ -377,3 +377,77 @@ def test_buy_raises_when_unaffordable_reserve() -> None:
             Buy(source="reserve", tier=card.tier, index=0),
             rng=random.Random(0),
         )
+
+
+def test_turn_skipped_when_player_has_no_legal_moves() -> None:
+    state = new_game(2, seed=0)
+    # Empty the gem bank — blocks TakeThree/TakeTwo for everyone
+    for color in (
+        GemColor.DIAMOND,
+        GemColor.SAPPHIRE,
+        GemColor.EMERALD,
+        GemColor.RUBY,
+        GemColor.ONYX,
+    ):
+        state.bank[color] = 0
+    # Fill player 1's reserved — blocks Reserve; player 1 has no tokens → no Buy
+    state.players[1].reserved = list(ALL_CARDS[:3])
+    # Give player 0 a free visible card they can buy despite the empty bank
+    state.visible[1][0] = Card(
+        id=9000, tier=1, bonus=GemColor.RUBY, prestige=1, cost={}
+    )
+    apply_action(state, Buy(source="table", tier=1, index=0), rng=random.Random(0))
+    # Player 1 has no legal moves → turn skipped → back to player 0
+    assert state.current_player == 0
+    assert state.phase == GamePhase.MAIN
+
+
+def test_stalemate_when_all_players_stuck() -> None:
+    state = new_game(2, seed=0)
+    # Remove all cards from visible and decks
+    for tier in (1, 2, 3):
+        state.visible[tier] = [None, None, None, None]
+        state.decks[tier] = []
+    # Empty the gem bank
+    for color in (
+        GemColor.DIAMOND,
+        GemColor.SAPPHIRE,
+        GemColor.EMERALD,
+        GemColor.RUBY,
+        GemColor.ONYX,
+    ):
+        state.bank[color] = 0
+    # Player 0: one free reserved card + one unaffordable card
+    free_card = Card(id=9000, tier=1, bonus=GemColor.RUBY, prestige=1, cost={})
+    impossible = Card(
+        id=9001, tier=1, bonus=GemColor.RUBY, prestige=0, cost={GemColor.RUBY: 10}
+    )
+    state.players[0].reserved = [free_card, impossible]
+    # Player 1: three unaffordable reserved cards, no tokens
+    state.players[1].reserved = [
+        Card(
+            id=9002 + i,
+            tier=1,
+            bonus=GemColor.RUBY,
+            prestige=0,
+            cost={GemColor.RUBY: 10},
+        )
+        for i in range(3)
+    ]
+    apply_action(state, Buy(source="reserve", tier=1, index=0), rng=random.Random(0))
+    # Both players have no moves after the buy → stalemate
+    assert state.phase == GamePhase.STALEMATE
+
+
+def test_stalemate_returns_equal_split() -> None:
+    state = new_game(2, seed=0)
+    state.phase = GamePhase.STALEMATE
+    r = returns(state)
+    assert abs(r[0] - 0.5) < 1e-9
+    assert abs(r[1] - 0.5) < 1e-9
+
+
+def test_legal_actions_stalemate_returns_empty() -> None:
+    state = new_game(2, seed=0)
+    state.phase = GamePhase.STALEMATE
+    assert legal_actions(state) == []
