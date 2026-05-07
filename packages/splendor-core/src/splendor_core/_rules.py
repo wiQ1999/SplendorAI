@@ -233,17 +233,32 @@ def _exec_reserve(
     action: Reserve,
     rng: random.Random,
 ) -> None:
+    if len(player.reserved) >= _MAX_RESERVED:
+        raise ValueError(
+            f"Cannot reserve: player already holds {_MAX_RESERVED} reserved cards"
+        )
+    if action.tier not in (1, 2, 3):
+        raise ValueError(f"Reserve tier must be 1, 2, or 3 (got {action.tier})")
+
     if action.index is None:
         deck = state.decks[action.tier]
         if not deck:
-            return
+            raise ValueError(
+                f"Cannot reserve blind from tier {action.tier}: deck is empty"
+            )
         card = deck.pop()
     else:
-        card = state.visible[action.tier][action.index]
+        visible_row = state.visible[action.tier]
+        if not 0 <= action.index < len(visible_row):
+            raise ValueError(
+                f"Reserve index {action.index} out of range for tier {action.tier}"
+            )
+        card = visible_row[action.index]
         if card is None:
-            return
-        replacement = _draw_from_deck(state, action.tier)
-        state.visible[action.tier][action.index] = replacement
+            raise ValueError(
+                f"Cannot reserve tier {action.tier} slot {action.index}: slot is empty"
+            )
+        state.visible[action.tier][action.index] = _draw_from_deck(state, action.tier)
 
     player.reserved.append(card)
 
@@ -254,12 +269,36 @@ def _exec_reserve(
 
 def _exec_buy(state: GameState, player: PlayerState, action: Buy) -> None:
     if action.source == "table":
-        card = state.visible[action.tier][action.index]
+        if action.tier not in (1, 2, 3):
+            raise ValueError(f"Buy tier must be 1, 2, or 3 (got {action.tier})")
+        visible_row = state.visible[action.tier]
+        if not 0 <= action.index < len(visible_row):
+            raise ValueError(
+                f"Buy index {action.index} out of range for tier {action.tier}"
+            )
+        card = visible_row[action.index]
         if card is None:
-            return
+            raise ValueError(
+                f"Cannot buy tier {action.tier} slot {action.index}: slot is empty"
+            )
+        if not _can_afford_with(
+            player.tokens, player.bonuses, player.tokens[GemColor.GOLD], card
+        ):
+            raise ValueError(
+                f"Cannot afford card at tier {action.tier} slot {action.index}"
+            )
         state.visible[action.tier][action.index] = _draw_from_deck(state, action.tier)
     else:
+        if not 0 <= action.index < len(player.reserved):
+            raise ValueError(
+                f"Buy reserve index {action.index} out of range"
+                f" (player has {len(player.reserved)} reserved cards)"
+            )
         card = player.reserved[action.index]
+        if not _can_afford_with(
+            player.tokens, player.bonuses, player.tokens[GemColor.GOLD], card
+        ):
+            raise ValueError(f"Cannot afford reserved card at index {action.index}")
         player.reserved.pop(action.index)
 
     _pay_for_card(state, player, card, player.bonuses)

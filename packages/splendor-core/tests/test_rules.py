@@ -293,3 +293,87 @@ def test_take_three_not_in_legal_when_color_unavailable() -> None:
         a for a in actions if isinstance(a, TakeThree) and GemColor.DIAMOND in a.colors
     ]
     assert len(illegal) == 0
+
+
+def test_reserve_raises_when_at_limit() -> None:
+    state = new_game(2, seed=0)
+    state.players[0].reserved = list(ALL_CARDS[:3])
+    with pytest.raises(ValueError, match="already holds"):
+        apply_action(state, Reserve(tier=1, index=0), rng=random.Random(0))
+
+
+def test_reserve_raises_when_blind_deck_empty() -> None:
+    state = new_game(2, seed=0)
+    state.decks[1] = []
+    with pytest.raises(ValueError, match="deck is empty"):
+        apply_action(state, Reserve(tier=1, index=None), rng=random.Random(0))
+
+
+def test_reserve_raises_on_empty_slot() -> None:
+    state = new_game(2, seed=0)
+    state.visible[1][0] = None
+    with pytest.raises(ValueError, match="slot is empty"):
+        apply_action(state, Reserve(tier=1, index=0), rng=random.Random(0))
+
+
+def test_reserve_raises_on_out_of_range_index() -> None:
+    state = new_game(2, seed=0)
+    with pytest.raises(ValueError, match="out of range"):
+        apply_action(state, Reserve(tier=1, index=99), rng=random.Random(0))
+
+
+def test_reserve_raises_on_invalid_tier() -> None:
+    state = new_game(2, seed=0)
+    with pytest.raises(ValueError, match="tier must be"):
+        apply_action(state, Reserve(tier=0, index=None), rng=random.Random(0))
+
+
+def test_buy_raises_on_empty_slot() -> None:
+    state = new_game(2, seed=0)
+    state.visible[1][0] = None
+    with pytest.raises(ValueError, match="slot is empty"):
+        apply_action(state, Buy(source="table", tier=1, index=0), rng=random.Random(0))
+
+
+def test_buy_raises_on_out_of_range_table_index() -> None:
+    state = new_game(2, seed=0)
+    with pytest.raises(ValueError, match="out of range"):
+        apply_action(state, Buy(source="table", tier=1, index=99), rng=random.Random(0))
+
+
+def test_buy_raises_on_invalid_tier() -> None:
+    state = new_game(2, seed=0)
+    with pytest.raises(ValueError, match="tier must be"):
+        apply_action(state, Buy(source="table", tier=0, index=0), rng=random.Random(0))
+
+
+def test_buy_raises_when_unaffordable_table() -> None:
+    state = new_game(2, seed=0)
+    card = next(c for c in state.visible[1] if c is not None)
+    idx = state.visible[1].index(card)
+    with pytest.raises(ValueError, match="Cannot afford"):
+        apply_action(
+            state, Buy(source="table", tier=1, index=idx), rng=random.Random(0)
+        )
+
+
+def test_buy_raises_on_out_of_range_reserve_index() -> None:
+    state = new_game(2, seed=0)
+    with pytest.raises(ValueError, match="out of range"):
+        apply_action(
+            state, Buy(source="reserve", tier=1, index=0), rng=random.Random(0)
+        )
+
+
+def test_buy_raises_when_unaffordable_reserve() -> None:
+    state = new_game(2, seed=0)
+    player = state.players[0]
+    card = state.visible[1][0]
+    assert card is not None
+    player.reserved.append(card)
+    with pytest.raises(ValueError, match="Cannot afford"):
+        apply_action(
+            state,
+            Buy(source="reserve", tier=card.tier, index=0),
+            rng=random.Random(0),
+        )
